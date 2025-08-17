@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login - Mathematics Platform</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bitmaks/cm-web-fonts@latest/fonts.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-page">
+    <div class="login-overlay">
+        <div class="login-container">
+            <h1>Mathematics Platform</h1>
+            <p>Secure access to your LaTeX workspace</p>
+            
+            <!-- Login/Register Toggle -->
+            <div class="auth-toggle">
+                <button id="loginToggle" class="toggle-btn active">Sign In</button>
+                <button id="registerToggle" class="toggle-btn">Create Account</button>
+            </div>
+            
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="loginEmail">Email Address</label>
+                    <input type="email" id="loginEmail" required placeholder="your.email@school.edu">
+                </div>
+                
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required placeholder="Enter your password">
+                </div>
+                
+                <button type="submit" class="auth-btn">Sign In</button>
+                
+                <div class="auth-links">
+                    <button type="button" class="link-btn" id="forgotPasswordBtn">Forgot Password?</button>
+                </div>
+            </form>
+            
+            <!-- Register Form -->
+            <form id="registerForm" class="auth-form" style="display: none;">
+                <div class="form-group">
+                    <label for="registerName">Display Name (Optional)</label>
+                    <input type="text" id="registerName" placeholder="Your preferred name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerEmail">Email Address</label>
+                    <input type="email" id="registerEmail" required placeholder="your.email@school.edu">
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" required placeholder="At least 6 characters">
+                    <small>Password must be at least 6 characters long</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" required placeholder="Confirm your password">
+                </div>
+                
+                <button type="submit" class="auth-btn">Create Account</button>
+            </form>
+            
+            <!-- Password Reset Form -->
+            <form id="resetForm" class="auth-form" style="display: none;">
+                <div class="form-group">
+                    <label for="resetEmail">Email Address</label>
+                    <input type="email" id="resetEmail" required placeholder="Enter your email address">
+                </div>
+                
+                <button type="submit" class="auth-btn">Send Reset Email</button>
+                
+                <div class="auth-links">
+                    <button type="button" class="link-btn" id="backToLoginBtn">Back to Sign In</button>
+                </div>
+            </form>
+            
+            <div id="authError" class="auth-error" style="display: none;">
+                Error message will appear here
+            </div>
+            
+            <div id="authSuccess" class="auth-success" style="display: none;">
+                Success message will appear here
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Loading Overlay -->
+    <div id="firebaseLoading" class="firebase-loading-overlay" style="display: none;">
+        <div class="firebase-loading-content">
+            <div class="firebase-spinner"></div>
+            <p id="firebaseLoadingText">Connecting to Firebase...</p>
+        </div>
+    </div>
+
+    <script type="module" src="js/firebase-config.js"></script>
+    <script type="module" src="js/firebase-auth.js"></script>
+    <script type="module" src="js/login.js"></script>
+</body>
+</html>

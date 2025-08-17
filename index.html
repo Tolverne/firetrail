@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bitmaks/cm-web-fonts@latest/fonts.css">
+    <link rel="stylesheet" href="style.css">
+    <title>Interactive LaTeX Quiz - Student Platform</title>
+    
+    <!-- MathJax configuration -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                prefilterHooks: [
+                    function (data) {
+                        data.math = data.math.replace(/\\vspace\{[^}]*\}/g, '');
+                    }
+                ]
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <!-- Main App Interface -->
+    <div class="app-container">
+        <!-- File Browser Sidebar -->
+        <div id="fileSidebar" class="file-sidebar">
+            <div class="sidebar-header">
+                <div>
+                    <h3>LaTeX Files</h3>
+                    <div class="user-info">
+                        <span id="userDisplay">Loading...</span>
+                        <button class="logout-btn" id="logoutBtn">Sign Out</button>
+                    </div>
+                </div>
+                <button id="refreshTree" class="refresh-btn" title="Refresh file tree">🔄</button>
+            </div>
+            <div class="file-tree-container">
+                <!-- File tree will be rendered here -->
+            </div>
+            <div id="currentFileInfo" class="current-file-info" style="display: none;">
+                <!-- Current file info will be shown here -->
+            </div>
+            
+            <!-- Global Drawing Tools -->
+            <div class="sidebar-tools">
+                <h4>Drawing Tools</h4>
+                <div class="color-picker">
+                    <div class="color-btn active" style="background-color: #000000;" data-color="#000000" title="Black"></div>
+                    <div class="color-btn" style="background-color: #0066cc;" data-color="#0066cc" title="Blue"></div>
+                    <div class="color-btn" style="background-color: #cc0000;" data-color="#cc0000" title="Red"></div>
+                    <div class="color-btn" style="background-color: #00cc00;" data-color="#00cc00" title="Green"></div>
+                    <div class="color-btn" style="background-color: #ff6600;" data-color="#ff6600" title="Orange"></div>
+                    <div class="color-btn" style="background-color: #9900cc;" data-color="#9900cc" title="Purple"></div>
+                </div>
+                <button class="eraser-btn">🧽 Eraser</button>
+                
+                <!-- Canvas Storage Controls -->
+                <div class="storage-controls">
+                    <button class="canvas-save-btn" id="saveCanvases">💾 Export All Canvases</button>
+                    <button class="canvas-save-btn" id="loadCanvases">📁 Import Canvases</button>
+                    <input type="file" id="canvasFileInput" accept=".json" style="display: none;">
+                </div>
+                
+                <!-- Firebase Status -->
+                <div class="firebase-status" id="firebaseStatus">
+                    <div class="status-indicator">
+                        <span class="status-dot" id="statusDot"></span>
+                        <span class="status-text" id="statusText">Connecting...</span>
+                    </div>
+                </div>
+                
+                <div class="tool-info">
+                    <small>Click any canvas to start drawing</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar Toggle Button -->
+        <button id="sidebarToggle" class="sidebar-toggle" title="Hide file browser">◀</button>
+        
+        <!-- Main Content Area -->
+        <div id="mainContent" class="main-content">
+            <div class="container">
+                <div class="header">
+                    <h1>Mathematics: Analysis and Approaches</h1>
+                </div>
+                
+                <div class="loading" id="loading">
+                    <p>🔄 Processing LaTeX file...</p>
+                </div>
+
+                <!-- Section Carousel -->
+                <div id="sectionCarousel" class="section-carousel" style="display: none;">
+                    <div class="carousel-header">
+                        <div class="section-tabs" id="sectionTabs">
+                            <!-- Section tabs will be rendered here -->
+                        </div>
+                        <div class="carousel-controls">
+                            <button id="prevSection" class="carousel-btn" title="Previous section">‹</button>
+                            <span id="sectionCounter" class="section-counter">1 / 1</span>
+                            <button id="nextSection" class="carousel-btn" title="Next section">›</button>
+                        </div>
+                    </div>
+                    <div class="carousel-body">
+                        <div class="carousel-container" id="carouselContainer">
+                            <!-- Section slides will be rendered here -->
+                        </div>
+                    </div>
+                    <div class="keyboard-hint">
+                        Use ← → arrow keys to navigate sections
+                    </div>
+                </div>
+
+                <div id="questionsContainer"></div>
+
+                <button id="generatePdf" class="generate-pdf-btn" style="display: none;">
+                    📄 Generate PDF
+                </button>
+                <div class="pdf-progress-container" style="display: none; margin: 20px 0; text-align: center;">
+                    <p style="margin-bottom: 10px; color: #555;">Generating PDF, please wait...</p>
+                    <progress id="pdfProgress" value="0" max="100" style="width: 80%; height: 20px;"></progress>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay for Firebase Operations -->
+    <div id="firebaseLoading" class="firebase-loading-overlay" style="display: none;">
+        <div class="firebase-loading-content">
+            <div class="firebase-spinner"></div>
+            <p id="firebaseLoadingText">Connecting to Firebase...</p>
+        </div>
+    </div>
+
+    <!-- Include Firebase and JavaScript files -->
+    <script type="module" src="js/firebase-config.js"></script>
+    <script type="module" src="js/firebase-auth.js"></script>
+    <script src="js/file-manager.js"></script>
+    <script src="js/latex-parser.js"></script>
+    <script src="js/canvas-handler.js"></script>
+    <script src="js/pdf-generator.js"></script>
+    <script type="module" src="js/app.js"></script>
